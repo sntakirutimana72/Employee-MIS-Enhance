@@ -52,5 +52,11 @@ class ComparatorsTest {
         .sorted(Comparators.Employee.bySalaryDesc()).collect(Collectors.toList());
       assertEquals(List.of(employees.get(0), employees.get(2), employees.get(1)), employeeList);
     }
+
+    @Test
+    void sortingEmptyListShouldNotRaiseError() {
+      employees.clear();
+      assertDoesNotThrow(() -> employees.stream().sorted(Comparators.Employee.bySalaryDesc()).toList());
+    }
   }
 }
