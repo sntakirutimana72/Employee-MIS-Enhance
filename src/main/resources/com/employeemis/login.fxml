@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.employeemis.controllers.LoginController">
+  <VBox layoutX="2.0" layoutY="1.0" prefHeight="98.0" prefWidth="320.0"
+        AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+        AnchorPane.topAnchor="0.0">
+    <styleClass>
+      <String fx:value="layout"/>
+      <String fx:value="bordered"/>
+    </styleClass>
+    <padding>
+      <Insets bottom="60.0" left="16.0" right="16.0" top="10.0"/>
+    </padding>
+
+    <!--  Form Label  -->
+    <AnchorPane prefHeight="30.0" prefWidth="200.0">
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="91.0" layoutY="6.0" styleClass="text-color"
+             text="Login" AnchorPane.bottomAnchor="0.0"
+             AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <padding>
+          <Insets bottom="30.0" top="30.0"/>
+        </padding>
+        <font>
+          <Font size="24.0"/>
+        </font>
+      </Label>
+    </AnchorPane>
+
+    <!-- Form fields -->
+    <VBox prefHeight="50.0" prefWidth="100.0">
+
+      <!-- Username field -->
+      <VBox.margin>
+        <Insets bottom="20.0"/>
+      </VBox.margin>
+      <AnchorPane prefHeight="20.0" prefWidth="200.0">
+        <Label styleClass="text-color" text="Username"
+               AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+               AnchorPane.topAnchor="0.0"/>
+      </AnchorPane>
+      <TextField fx:id="usernameField" promptText="Enter username" styleClass="form-field bordered text-color" />
+    </VBox>
+
+    <!-- Password field -->
+    <VBox layoutX="11.0" layoutY="106.0" prefHeight="50.0" prefWidth="100.0">
+      <VBox.margin>
+        <Insets bottom="20.0"/>
+      </VBox.margin>
+      <AnchorPane prefHeight="20.0" prefWidth="200.0">
+        <Label styleClass="text-color" text="Password"
+               AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+               AnchorPane.topAnchor="0.0"/>
+      </AnchorPane>
+      <TextField fx:id="passwordField" promptText="Enter password" styleClass="form-field bordered text-color"/>
+    </VBox>
+
+    <AnchorPane prefHeight="20.0" prefWidth="200.0">
+      <VBox.margin>
+        <Insets top="20.0"/>
+      </VBox.margin>
+      <Button mnemonicParsing="false" text="Sign in" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+              AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+    </AnchorPane>
+  </VBox>
+</AnchorPane>
