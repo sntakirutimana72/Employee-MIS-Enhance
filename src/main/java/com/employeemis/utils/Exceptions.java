@@ -34,4 +34,10 @@ public class Exceptions {
       super(String.format("%s with %s=`%s` already exists", resource, attributeName, value));
     }
   }
+
+  public static class EntityBacktrackRefViolationException extends IllegalArgumentException {
+    public EntityBacktrackRefViolationException(String resource, String backref) {
+      super(String.format("Cannot delete %s while it still has %s", resource, backref));
+    }
+  }
 }

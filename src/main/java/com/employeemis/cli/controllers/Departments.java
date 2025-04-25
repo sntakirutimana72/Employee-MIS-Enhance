@@ -4,6 +4,8 @@ import com.employeemis.cli.Helpers;
 import com.employeemis.cli.Main;
 import com.employeemis.models.Department;
 import com.employeemis.repositories.DepartmentRepository;
+import com.employeemis.utils.Exceptions;
+import com.employeemis.utils.Loggers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,8 +76,13 @@ public class Departments extends Controller {
     Helpers.Errors.cannotBeEmpty("departments", departments.isEmpty());
     int selected = Helpers.Selectors.selectEntity("department", getScanner(), departments);
 
-    getRepository().remove(selected);
-    Helpers.Printer.alert("Department deleted successfully!!");
+    try {
+      getRepository().remove(selected);
+    } catch (Exceptions.ResourceNotFoundException e) {
+      Loggers.BasicLogger.error(getClass().getName(), "DELETE", e);
+    } finally {
+      Helpers.Printer.alert("Department deleted successfully!!");
+    }
   }
 
   private void dispatch(int choice) throws Helpers.Errors.AbortException {

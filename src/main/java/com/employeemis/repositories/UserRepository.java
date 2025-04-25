@@ -1,15 +1,13 @@
 package com.employeemis.repositories;
 
 import com.employeemis.models.User;
-
-import java.util.Objects;
+import com.employeemis.utils.Exceptions;
 
 public class UserRepository extends RepositoryAbstract<Integer, User> {
   @Override
-  protected void enforceUniqueConstraint(User user) throws IllegalArgumentException {
+  protected void enforceUniqueConstraint(User user) throws Exceptions.UniqueConstraintViolationException {
     for (User other : getAll())
-      if (Objects.equals(user.getUsername().toLowerCase(), other.getUsername().toLowerCase()))
-        throw new IllegalArgumentException(
-          String.format("%s with name=`%s` already exists", user.getClass().getName(), user.getUsername()));
+      if (user.getUsername().equalsIgnoreCase(other.getUsername()))
+        throw new Exceptions.UniqueConstraintViolationException(user.getClass().getName(), "username", user.getUsername());
   }
 }

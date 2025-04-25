@@ -30,14 +30,15 @@ public abstract class RepositoryAbstract<K, V extends Trackable<K>> implements R
   }
 
   @Override
-  public void add(V entity) throws Exceptions.DynamicUpdateException {
+  public void add(V entity) throws Exceptions.UniqueConstraintViolationException {
     enforceUniqueConstraint(entity);
     repository.put(entity.getId(), entity);
   }
 
   @Override
-  public void remove(K key) {
-    repository.remove(key);
+  public void remove(K key) throws Exceptions.ResourceNotFoundException {
+    if (Objects.isNull(repository.remove(key)))
+      throw new Exceptions.ResourceNotFoundException(getClass().getName(), key);
   }
 
   @Override

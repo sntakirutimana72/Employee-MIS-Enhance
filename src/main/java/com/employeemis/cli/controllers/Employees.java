@@ -6,6 +6,7 @@ import com.employeemis.models.Department;
 import com.employeemis.models.Employee;
 import com.employeemis.repositories.DepartmentRepository;
 import com.employeemis.repositories.EmployeeRepository;
+import com.employeemis.utils.Exceptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,7 +97,7 @@ public class Employees extends Controller {
         getRepository().add(employee);
         Helpers.Printer.alert("Employee created successfully!!");
         return;
-      } catch (IllegalArgumentException e) {
+      } catch (IllegalArgumentException | Exceptions.ResourceNotFoundException e) {
         Helpers.Printer.alert(e.getMessage());
       }
     }
@@ -156,7 +157,7 @@ public class Employees extends Controller {
         }
         Helpers.Printer.alert(String.format("Employee no~(%s) was successfully updated!!", empSelection));
         return;
-      } catch (IllegalArgumentException e) {
+      } catch (IllegalArgumentException | Exceptions.ResourceNotFoundException e) {
         Helpers.Printer.alert(e.getMessage());
       }
     }
@@ -167,9 +168,12 @@ public class Employees extends Controller {
     Helpers.Errors.cannotBeEmpty("employee", employees.isEmpty());
 
     int selection = Helpers.Selectors.selectEntity("employee", getScanner(), employees);
-
-    getRepository().remove(selection);
-    Helpers.Printer.alert(String.format("Employee no~(%s) was successfully deleted!!", selection));
+    try {
+      getRepository().remove(selection);
+      Helpers.Printer.alert(String.format("Employee no~(%s) was successfully deleted!!", selection));
+    } catch (Exceptions.ResourceNotFoundException e) {
+      Helpers.Printer.alert(e.getMessage());
+    }
   }
 
   private void processCRUD(int choice) throws Helpers.Errors.AbortException {
@@ -184,9 +188,14 @@ public class Employees extends Controller {
     List<Department<Integer>> departments = getDepartmentRepository().getAll();
     Helpers.Errors.cannotBeEmpty("department", departments.isEmpty());
     int choice = Helpers.Selectors.selectEntity("department", getScanner(), departments);
-    String departmentName = getDepartmentRepository().get(choice).getName();
-    double average = getRepository().getSalaryAverageByDepartment(departmentName);
-    Helpers.Printer.alert(String.format("Salary Average in %s department is $%f", departmentName, average));
+
+    try {
+      String departmentName = getDepartmentRepository().get(choice).getName();
+      double average = getRepository().getSalaryAverageByDepartment(departmentName);
+      Helpers.Printer.alert(String.format("Salary Average in %s department is $%f", departmentName, average));
+    } catch (Exceptions.ResourceNotFoundException e) {
+      Helpers.Printer.alert(e.getMessage());
+    }
   }
 
   public void process() throws Helpers.Errors.AbortException {

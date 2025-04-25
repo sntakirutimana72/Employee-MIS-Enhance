@@ -1,6 +1,7 @@
 package com.employeemis.repositories;
 
 import com.employeemis.models.Employee;
+import com.employeemis.utils.Exceptions;
 
 import java.util.Comparator;
 import java.util.List;
@@ -22,7 +23,7 @@ public class EmployeeRepository<K> extends RepositoryAbstract<K, Employee<K>> {
   }
 
   @Override
-  public void remove(K key) {
+  public void remove(K key) throws Exceptions.ResourceNotFoundException {
     get(key).setDepartment(null);
     super.remove(key);
   }

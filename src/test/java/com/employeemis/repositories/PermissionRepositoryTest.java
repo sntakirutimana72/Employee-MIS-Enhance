@@ -1,6 +1,7 @@
 package com.employeemis.repositories;
 
 import com.employeemis.models.Permission;
+import com.employeemis.utils.Exceptions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ class PermissionRepositoryTest {
   @Test
   void shouldRegardUniqueConstraintOnName() {
     repository.add(new Permission("Tenant", "all"));
-    assertThrows(IllegalArgumentException.class, () -> {
+    assertThrows(Exceptions.UniqueConstraintViolationException.class, () -> {
       repository.add(new Permission("Tenant", "all"));
     });
   }

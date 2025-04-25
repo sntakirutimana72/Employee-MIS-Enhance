@@ -1,22 +1,20 @@
 package com.employeemis.repositories;
 
 import com.employeemis.models.Department;
-
-import java.util.Objects;
+import com.employeemis.utils.Exceptions;
 
 public class DepartmentRepository<E> extends RepositoryAbstract<Integer, Department<E>> {
   @Override
-  protected void enforceUniqueConstraint(Department<E> dept) throws IllegalArgumentException {
+  protected void enforceUniqueConstraint(Department<E> dept) throws Exceptions.UniqueConstraintViolationException {
     for (Department<E> other : getAll())
-      if (Objects.equals(dept.getName().toLowerCase(), other.getName().toLowerCase()))
-        throw new IllegalArgumentException(
-          String.format("%s with name=`%s` already exists", dept.getClass().getName(), dept.getName()));
+      if (dept.getName().equalsIgnoreCase(other.getName()))
+        throw new Exceptions.UniqueConstraintViolationException(getClass().getName(), "name", dept.getName());
   }
 
   @Override
-  public void remove(Integer key) {
+  public void remove(Integer key) throws Exceptions.ResourceNotFoundException {
     if (!get(key).getEmployees().isEmpty())
-      throw new IllegalArgumentException("Cannot delete department with employees");
+      throw new Exceptions.EntityBacktrackRefViolationException("department", "employees");
     super.remove(key);
   }
 }

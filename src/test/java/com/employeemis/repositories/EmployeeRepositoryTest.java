@@ -2,6 +2,7 @@ package com.employeemis.repositories;
 
 import com.employeemis.models.Department;
 import com.employeemis.models.Employee;
+import com.employeemis.utils.Exceptions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -9,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 class EmployeeRepositoryTest {
   private EmployeeRepository<Integer> repository;
@@ -32,16 +32,16 @@ class EmployeeRepositoryTest {
 
   @Test
   void expectGetToThrowErrorWhenNoEmployeeFound() {
-    assertThrows(NoSuchElementException.class, () -> repository.get(2));
+    assertThrows(Exceptions.ResourceNotFoundException.class, () -> repository.get(2));
   }
 
   @Test
-  void expectGetToReturnEmployee() {
+  void expectGetToReturnEmployee() throws Exceptions.ResourceNotFoundException {
     assertInstanceOf(Employee.class, repository.get(1));
   }
 
   @Test
-  void expectAddToStoreEmployeeById() {
+  void expectAddToStoreEmployeeById() throws Exceptions.ResourceNotFoundException {
     Employee<Integer> employee = create(2);
     repository.add(employee);
     assertEquals(employee, repository.get(employee.getId()));
@@ -49,17 +49,17 @@ class EmployeeRepositoryTest {
 
   @Test
   void expectDuplicateKeyToThrow() {
-    assertThrows(IllegalArgumentException.class, () -> repository.add(create(1)));
+    assertThrows(Exceptions.UniqueConstraintViolationException.class, () -> repository.add(create(1)));
   }
 
   @Test
-  void expectRemoveToDeleteExistingEmployee() {
+  void expectRemoveToDeleteExistingEmployee() throws Exceptions.ResourceNotFoundException {
     Employee<Integer> empToBeDeleted = repository.get(1);
     Department<Integer> assignedDept = empToBeDeleted.getDepartment();
 
     assertTrue(assignedDept.getEmployees().stream().anyMatch(empToBeDeleted::equals));
     repository.remove(1);
-    assertThrows(NoSuchElementException.class, () -> repository.get(1));
+    assertThrows(Exceptions.ResourceNotFoundException.class, () -> repository.get(1));
     assertTrue(assignedDept.getEmployees().stream().noneMatch(empToBeDeleted::equals));
     assertNull(empToBeDeleted.getDepartment());
   }
@@ -72,12 +72,12 @@ class EmployeeRepositoryTest {
 
   @Test
   void expectUpdateToThrowWhenNoSetterFound() {
-    assertThrows(Exception.class, () -> repository.update(1, "age", "123"));
+    assertThrows(Exceptions.DynamicUpdateException.class, () -> repository.update(1, "age", "123"));
   }
 
   @Test
   void expectUpdateToThrowDueToValidationError() {
-    assertThrows(Exception.class, () -> repository.update(1, "name", "123"));
+    assertThrows(Exceptions.DynamicUpdateException.class, () -> repository.update(1, "name", "123"));
   }
 
   @Test

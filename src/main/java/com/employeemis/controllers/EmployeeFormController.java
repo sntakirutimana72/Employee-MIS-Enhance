@@ -2,8 +2,9 @@ package com.employeemis.controllers;
 
 import com.employeemis.models.Department;
 import com.employeemis.models.Employee;
-
+import static com.employeemis.utils.Common.*;
 import com.employeemis.repositories.RepositoryUpdateConsumer;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -17,7 +18,6 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static com.employeemis.utils.Common.*;
 
 public class EmployeeFormController {
   @FXML private TextField nameField;
@@ -65,7 +65,7 @@ public class EmployeeFormController {
 
   private <T> void handleUpdate(String attribute, T value) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
     if (!Objects.isNull(record)) {
-      Method getter = hasGetter(record.getClass(), attribute);
+      Method getter = MethodFinders.hasGetter(record.getClass(), attribute);
       if (!getter.invoke(record).equals(value)) {
         this.onUpdate.accept(record.getId(), attribute, value);
       }

@@ -1,7 +1,7 @@
 package com.employeemis.repositories;
 
 import com.employeemis.models.Department;
-import com.employeemis.models.User;
+import com.employeemis.utils.Exceptions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,6 +24,6 @@ class DepartmentRepositoryTest {
   @Test
   void shouldRegardUniqueConstraintOnName() {
     repository.add(new Department<>("HR"));
-    assertThrows(IllegalArgumentException.class, () -> repository.add(new Department<>("HR")));
+    assertThrows(Exceptions.UniqueConstraintViolationException.class, () -> repository.add(new Department<>("HR")));
   }
 }

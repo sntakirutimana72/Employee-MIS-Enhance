@@ -29,10 +29,12 @@ public class Main extends Application {
     departmentRepository.add(new Department<>("customer care"));
 
     // Add employee dummy state data
-    employeeRepository.add(new Employee<>(
-      "1", "joe", departmentRepository.get(1), 2.4, 3, 4.1));
-    employeeRepository.add(new Employee<>(
-      "2", "jean", departmentRepository.get(2), 75.3, 3, 3.1));
+    try {
+      employeeRepository.add(new Employee<>(
+        "1", "joe", departmentRepository.get(1), 2.4, 3, 4.1));
+      employeeRepository.add(new Employee<>(
+        "2", "jean", departmentRepository.get(2), 75.3, 3, 3.1));
+    } catch (Exception ignored) {}
   }
 
   public EmployeeRepository<String> getEmployeeRepository() {

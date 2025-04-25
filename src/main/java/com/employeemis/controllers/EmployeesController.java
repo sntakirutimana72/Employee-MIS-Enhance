@@ -6,6 +6,7 @@ import com.employeemis.repositories.EmployeeRepository;
 import com.employeemis.repositories.RepositoryUpdateConsumer;
 import com.employeemis.utils.Alerts;
 
+import com.employeemis.utils.Exceptions;
 import com.employeemis.utils.Filters;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -157,7 +158,9 @@ public class EmployeesController extends Controller {
             null, "Are you sure?");
 
           if (yesOrNo.isPresent() && yesOrNo.get() == ButtonType.OK) {
-            repository().remove(employee.getId());
+            try {
+              repository().remove(employee.getId());
+            } catch (Exceptions.ResourceNotFoundException ignored) {}
             getTableView().getItems().remove(employee);
           }
         });
