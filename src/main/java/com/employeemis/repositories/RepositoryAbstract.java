@@ -1,6 +1,9 @@
 package com.employeemis.repositories;
 
 import com.employeemis.models.Trackable;
+import com.employeemis.utils.Common;
+import com.employeemis.utils.Exceptions;
+import com.employeemis.utils.Loggers;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -13,22 +16,21 @@ public abstract class RepositoryAbstract<K, V extends Trackable<K>> implements R
   }
 
   @Override
-  public V get(K key) throws NoSuchElementException {
+  public V get(K key) throws Exceptions.ResourceNotFoundException {
     V entity = repository.get(key);
     if (Objects.isNull(entity))
-      throw new NoSuchElementException("Resource not found");
+      throw new Exceptions.ResourceNotFoundException(getClass().getName(), key);
     return entity;
   }
 
-  protected void enforceUniqueConstraint(V entity) throws IllegalArgumentException {
+  protected void enforceUniqueConstraint(V entity) throws Exceptions.UniqueConstraintViolationException {
     K uid = entity.getId();
     if (repository.containsKey(uid))
-      throw new IllegalArgumentException(
-        String.format("%s with id=`%s` already exists", entity.getClass().getName(), uid));
+      throw new Exceptions.UniqueConstraintViolationException(entity.getClass().getName(), "id", uid);
   }
 
   @Override
-  public void add(V entity) {
+  public void add(V entity) throws Exceptions.DynamicUpdateException {
     enforceUniqueConstraint(entity);
     repository.put(entity.getId(), entity);
   }
@@ -39,13 +41,19 @@ public abstract class RepositoryAbstract<K, V extends Trackable<K>> implements R
   }
 
   @Override
-  public <T> void update(K key, String attribute, T value) throws IllegalArgumentException {
-    V entity = this.get(key);
+  public <T> void update(K key, String attribute, T value) throws Exceptions.DynamicUpdateException {
     try {
-      Method setter = com.employeemis.utils.Common.hasSetter(entity.getClass(), attribute, value);
+      V entity = this.get(key);
+      Method setter = Common.MethodFinders.hasSetter(entity.getClass(), attribute, value);
       setter.invoke(entity, value);
     } catch (Exception e) {
-      throw new IllegalArgumentException(e.getMessage());
+      Loggers.BasicLogger.error(getClass().getName(), "UPDATE", e);
+      throw new Exceptions.DynamicUpdateException(e.getMessage());
+    } finally {
+      Loggers.BasicLogger.info(
+        getClass().getName(),
+        "UPDATE",
+        String.format("%s value updated to NEW_VALUE=`%s`", attribute, value));
     }
   }
 

@@ -9,17 +9,17 @@ public class Validators {
 
     public static void validateYearsOfExperience(int yearsOfExperience) {
       if (yearsOfExperience < 0)
-        throw new IllegalArgumentException("Years of experience cannot be below 0");
+        throw new Exceptions.InvalidYearsOfExperienceException();
     }
 
     public static void validateSalary(double salary) {
       if (salary < 1)
-        throw new IllegalArgumentException("Salary cannot be below 1");
+        throw new Exceptions.InvalidSalaryException();
     }
 
     public static void validatePerformanceRate(double performanceRate) {
       if (performanceRate < 0 || performanceRate > 5)
-        throw new IllegalArgumentException("Performance rate must vary between 0-5");
+        throw new Exceptions.InvalidPerformanceRateException();
     }
   }
 
