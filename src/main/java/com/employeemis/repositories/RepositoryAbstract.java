@@ -15,11 +15,15 @@ public abstract class RepositoryAbstract<K, V extends Trackable<K>> implements R
     repository = new HashMap<>();
   }
 
+  protected String getEntityClassName() {
+    return this.getClass().getName().replace("Repository", "");
+  }
+
   @Override
   public V get(K key) throws Exceptions.ResourceNotFoundException {
     V entity = repository.get(key);
     if (Objects.isNull(entity))
-      throw new Exceptions.ResourceNotFoundException(getClass().getName(), key);
+      throw new Exceptions.ResourceNotFoundException(getEntityClassName(), key);
     return entity;
   }
 
@@ -38,7 +42,7 @@ public abstract class RepositoryAbstract<K, V extends Trackable<K>> implements R
   @Override
   public void remove(K key) throws Exceptions.ResourceNotFoundException {
     if (Objects.isNull(repository.remove(key)))
-      throw new Exceptions.ResourceNotFoundException(getClass().getName(), key);
+      throw new Exceptions.ResourceNotFoundException(getEntityClassName(), key);
   }
 
   @Override
@@ -48,11 +52,11 @@ public abstract class RepositoryAbstract<K, V extends Trackable<K>> implements R
       Method setter = Common.MethodFinders.hasSetter(entity.getClass(), attribute, value);
       setter.invoke(entity, value);
     } catch (Exception e) {
-      Loggers.BasicLogger.error(getClass().getName(), "UPDATE", e);
+      Loggers.BasicLogger.error(getEntityClassName(), "UPDATE", e);
       throw new Exceptions.DynamicUpdateException(e.getMessage());
     } finally {
       Loggers.BasicLogger.info(
-        getClass().getName(),
+        getEntityClassName(),
         "UPDATE",
         String.format("%s value updated to NEW_VALUE=`%s`", attribute, value));
     }
