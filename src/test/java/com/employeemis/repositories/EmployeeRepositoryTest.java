@@ -32,7 +32,8 @@ class EmployeeRepositoryTest {
 
   @Test
   void expectGetToThrowErrorWhenNoEmployeeFound() {
-    assertThrows(Exceptions.ResourceNotFoundException.class, () -> repository.get(2));
+    Exception e = assertThrows(Exceptions.ResourceNotFoundException.class, () -> repository.get(2));
+    assertTrue(e.getMessage().contains(repository.getClass().getName().replace("Repository", "")));
   }
 
   @Test
