@@ -66,6 +66,11 @@ class EmployeeRepositoryTest {
   }
 
   @Test
+  void expectRemoveToThrowErrorWhenNoEmployeeFound() {
+    assertThrows(Exceptions.ResourceNotFoundException.class, () -> repository.remove(1));
+  }
+
+  @Test
   void expectUpdateToCallSetterOfGivenAttribute() throws Exception {
     repository.update(1, "name", "New Dynamic Value");
     assertEquals("New Dynamic Value", repository.get(1).getName());
