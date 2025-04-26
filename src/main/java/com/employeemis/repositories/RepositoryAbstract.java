@@ -48,17 +48,20 @@ public abstract class RepositoryAbstract<K, V extends Trackable<K>> implements R
   @Override
   public <T> void update(K key, String attribute, T value) throws Exceptions.DynamicUpdateException {
     try {
+      // Query entity to be updated
       V entity = this.get(key);
+      // Find setter whose signature match the given parameter value type
       Method setter = Common.MethodFinders.hasSetter(entity.getClass(), attribute, value);
+      // If found, invoke setter to update entity data
       setter.invoke(entity, value);
-    } catch (Exception e) {
-      Loggers.BasicLogger.error(getEntityClassName(), "UPDATE", e);
-      throw new Exceptions.DynamicUpdateException(e.getMessage());
-    } finally {
+      // Log activity to console
       Loggers.BasicLogger.info(
         getEntityClassName(),
         "UPDATE",
         String.format("%s value updated to NEW_VALUE=`%s`", attribute, value));
+    } catch (Exception e) {
+      Loggers.BasicLogger.error(getEntityClassName(), "UPDATE", e);
+      throw new Exceptions.DynamicUpdateException(e.getMessage());
     }
   }
 

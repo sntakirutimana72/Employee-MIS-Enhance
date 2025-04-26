@@ -1,21 +1,15 @@
 package com.employeemis.cli;
 
+import com.employeemis.models.Entity;
 import com.employeemis.models.Nameable;
 import com.employeemis.models.Trackable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.function.Supplier;
 
 public class Helpers {
-
-  public static class Errors {
-    public static void cannotBeEmpty(String tag, boolean isEmpty) {
-      if (isEmpty)
-        throw new IllegalArgumentException(String.format("No %s records found", tag));
-    }
-    public static class AbortException extends Exception {}
-  }
 
   public static class Policies {
     public static void exist(String userInput) {
@@ -25,14 +19,21 @@ public class Helpers {
       }
     }
 
-    public static void abort(String userInput) throws Errors.AbortException {
+    public static <K, E extends Entity<K>> List<E> cannotBeEmpty(String tag, Supplier<List<E>> queryAll) {
+      List<E> records = queryAll.get();
+      if (records.isEmpty())
+        throw new IllegalArgumentException("No " + tag + " records found");
+      return records;
+    }
+
+    public static void abort(String userInput) throws Exceptions.AbortException {
       if (userInput.equals("..."))
-        throw new Errors.AbortException();
+        throw new Exceptions.AbortException(null);
     }
   }
 
   public static class Prompt {
-    public static String getText(Scanner scanner, String tag) throws Errors.AbortException {
+    public static String getText(Scanner scanner, String tag) throws Exceptions.AbortException {
       System.out.print(tag);
       String userInput = scanner.nextLine();
 
@@ -42,28 +43,19 @@ public class Helpers {
       return userInput;
     }
 
-    public static int getInt(Scanner scanner, String tag) throws Errors.AbortException {
+    public static int getInt(Scanner scanner, String tag) throws Exceptions.AbortException {
       return Integer.parseInt(getText(scanner, tag));
     }
 
-    public static int getPositiveInt(Scanner scanner, String tag, int min) throws Errors.AbortException {
+    public static int getPositiveInt(Scanner scanner, String tag, int min) throws Exceptions.AbortException {
       int value = getInt(scanner, tag);
       if (value < Math.max(0, min))
         throw new IllegalArgumentException("Value must be a positive value >= " + Math.max(0, min));
       return value;
     }
 
-    public static double getDouble(Scanner scanner, String tag) throws Errors.AbortException {
+    public static double getDouble(Scanner scanner, String tag) throws Exceptions.AbortException {
       return Double.parseDouble(getText(scanner, tag));
-    }
-
-    public static boolean getBoolean(Scanner scanner, String tag) throws Errors.AbortException {
-      String userInput = getText(scanner, tag);
-      if (userInput.isBlank() || userInput.matches("^N|NO|FALSE|0$"))
-        return false;
-      if (userInput.matches("^Y|YES|TRUE|1$"))
-        return true;
-      throw new IllegalArgumentException("Can only be one of (Y/YES/TRUE/1 or N/NO/FALSE/0)");
     }
   }
 
@@ -135,7 +127,7 @@ public class Helpers {
   }
 
   public static class Selectors {
-    public static int select(String tag, Scanner scanner, List<String> items) throws Errors.AbortException {
+    public static int select(String tag, Scanner scanner, List<String> items) throws Exceptions.AbortException {
       while (true) {
         try {
           // Display available options
@@ -152,13 +144,12 @@ public class Helpers {
       }
     }
 
-    public static <E extends Nameable & Trackable<Integer>> int selectEntity(String tag, Scanner scanner, List<E> items) throws Errors.AbortException {
-      int selection = select(
+    public static <E extends Nameable & Trackable<Integer>> int selectEntity(String tag, Scanner scanner, List<E> items) throws Exceptions.AbortException {
+      return select(
         String.format("Select %s", tag),
         scanner,
         items.stream().map(E::getName).toList()
       );
-      return items.get(selection).getId();
     }
   }
 }

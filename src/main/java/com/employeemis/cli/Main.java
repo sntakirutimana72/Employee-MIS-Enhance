@@ -1,45 +1,51 @@
 package com.employeemis.cli;
 
+import com.employeemis.cli.controller.EmployeeController;
+import com.employeemis.models.Department;
+import com.employeemis.models.Employee;
 import com.employeemis.repositories.DepartmentRepository;
 import com.employeemis.repositories.EmployeeRepository;
-import com.employeemis.repositories.PermissionRepository;
-import com.employeemis.repositories.UserRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
 public class Main {
-  private Integer sessionId;
   private final Scanner scanner;
-  private final UserRepository userRepository;
   private final EmployeeRepository<Integer> employeeRepository;
   private final DepartmentRepository<Integer> departmentRepository;
-  private final PermissionRepository permissionRepository;
 
   private Main() {
     super();
-
-    userRepository = new UserRepository();
     employeeRepository = new EmployeeRepository<>();
     departmentRepository = new DepartmentRepository<>();
-    permissionRepository = new PermissionRepository();
     scanner = new Scanner(System.in);
 
+    loadInitialData();
     Helpers.Printer.alert("Welcome To Employee Management System");
   }
 
-  public boolean isLoggedIn() {
-    return !Objects.isNull(sessionId);
-  }
+  private void loadInitialData() {
+    // Add department dummy state data
+    departmentRepository.add(new Department<>("hr"));
+    departmentRepository.add(new Department<>("it"));
+    departmentRepository.add(new Department<>("customer care"));
 
-  public PermissionRepository getPermissionRepository() {
-    return permissionRepository;
-  }
-
-  public UserRepository getUserRepository() {
-    return userRepository;
+    // Add employee dummy state data
+    try {
+      employeeRepository.add(new Employee<>(
+        1, "joe", departmentRepository.get(1), 2.4, 3, 4.1));
+      employeeRepository.add(new Employee<>(
+        2, "jean", departmentRepository.get(2), 75, 6, 3.1));
+      employeeRepository.add(new Employee<>(
+        3, "kim", departmentRepository.get(3), 25.3, 3, 2.21));
+      employeeRepository.add(new Employee<>(
+        4, "jim", departmentRepository.get(1), 17.3, 0, 2.3));
+      employeeRepository.add(new Employee<>(
+        5, "kenny", departmentRepository.get(3), 52.9, 5, 4.3));
+      employeeRepository.add(new Employee<>(
+        6, "Suzane", departmentRepository.get(2), 84.27, 1, 1.1));
+    } catch (Exception ignored) {}
   }
 
   public EmployeeRepository<Integer> getEmployeeRepository() {
@@ -57,29 +63,12 @@ public class Main {
   public void run() {
     //noinspection InfiniteLoopStatement
     while (true) {
-      int choice;
       try {
-        if (isLoggedIn()) {
-          choice = Helpers.Selectors.select(
-            "Select option", getScanner(), new ArrayList<>(
-              List.of("Users", "Employees", "Departments", "Permissions", "Logout", "Exit")
-            )
-          );
-          switch (choice) {
-            case 0 -> new com.employeemis.cli.controllers.Users(this).process();
-            case 1 -> new com.employeemis.cli.controllers.Employees(this).process();
-            case 2 -> new com.employeemis.cli.controllers.Departments(this).process();
-            case 3 -> new com.employeemis.cli.controllers.Permissions(this).process();
-            case 4 -> sessionId = null;
-            case 5 -> Helpers.Policies.exist("exit");
-          }
-        } else {
-          choice = Helpers.Selectors.select(
-            "Select option", getScanner(), new ArrayList<>(List.of("Login", "Exit")));
-          if (choice == 0)
-            sessionId = new com.employeemis.cli.controllers.Login(this).post();
-          else
-            Helpers.Policies.exist("exit");
+        int choice = Helpers.Selectors.select("Select option", getScanner(), List.of("Employee", "Department", "Exit"));
+        switch (choice) {
+          case 0 -> new EmployeeController(this).process();
+          case 1 -> new com.employeemis.cli.controller.DepartmentController(this).process();
+          case 2 -> Helpers.Policies.exist("exit");
         }
       } catch (Exception e) {
         Helpers.Printer.alert(Objects.isNull(e.getMessage()) ? "" : e.getMessage());
