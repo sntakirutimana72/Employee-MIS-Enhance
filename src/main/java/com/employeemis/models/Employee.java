@@ -1,10 +1,7 @@
 package com.employeemis.models;
 
+import com.employeemis.utils.Exceptions;
 import com.employeemis.utils.Validators;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 
 import java.util.Objects;
 
@@ -57,19 +54,19 @@ public class Employee<T> extends ActivableEntity<T> implements Employable<T> {
   }
 
   @Override
-  public void setSalary(double salary) throws IllegalArgumentException {
+  public void setSalary(double salary) throws Exceptions.InvalidSalaryException {
     Validators.Employee.validateSalary(salary);
     this.salary = salary;
   }
 
   @Override
-  public void setYearsOfExperience(int yearsOfExperience) throws IllegalArgumentException {
+  public void setYearsOfExperience(int yearsOfExperience) throws Exceptions.InvalidYearsOfExperienceException {
     Validators.Employee.validateYearsOfExperience(yearsOfExperience);
     this.yearsOfExperience = yearsOfExperience;
   }
 
   @Override
-  public void setPerformanceRate(double performanceRate) throws IllegalArgumentException {
+  public void setPerformanceRate(double performanceRate) throws Exceptions.InvalidPerformanceRateException {
     Validators.Employee.validatePerformanceRate(performanceRate);
     this.performanceRate = performanceRate;
   }
