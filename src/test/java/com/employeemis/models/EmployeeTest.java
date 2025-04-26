@@ -1,15 +1,14 @@
 package com.employeemis.models;
 
 import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 class EmployeeTest {
   private Employee<Integer> employee;
@@ -121,5 +120,10 @@ class EmployeeTest {
     double initialSalary = employee.getSalary();
     employee.setPerformanceRate(4.6);
     assertTrue(initialSalary < employee.giveSalaryRaise());
+  }
+
+  @Test
+  void shouldGracefullyThrowOnNullName() {
+    assertThrows(IllegalArgumentException.class, () -> new Employee<>("1", null, null, 0, 0, 4));
   }
 }
