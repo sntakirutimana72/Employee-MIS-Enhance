@@ -57,7 +57,7 @@ class FiltersTest {
     }
 
     @Test
-    void withPerformanceGreaterThanOrEqualTo() {
+    void shouldReturnOnlyEmployeesWhosePerformanceGreaterThanOrEqualTo() {
       employees.get(2).setPerformanceRate(3.2);
       employees.get(1).setPerformanceRate(3);
       assertTrue(
@@ -67,7 +67,7 @@ class FiltersTest {
     }
 
     @Test
-    void bySalaryRange() {
+    void shouldReturnOnlyEmployeesWhoseSalariesAreInTheGivenRange() {
       employees.get(2).setSalary(75);
       employees.get(1).setSalary(60);
       assertTrue(

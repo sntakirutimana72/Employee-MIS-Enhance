@@ -31,6 +31,13 @@ class EmployeeRepositoryTest {
   }
 
   @Test
+  void canAddNewEmployeeRecords() {
+    int initialSize = repository.getAll().size();
+    assertDoesNotThrow(() -> repository.add(create(23)));
+    assertTrue(repository.getAll().size() > initialSize);
+  }
+
+  @Test
   void expectGetToThrowErrorWhenNoEmployeeFound() {
     Exception e = assertThrows(Exceptions.ResourceNotFoundException.class, () -> repository.get(2));
     assertTrue(e.getMessage().contains(repository.getClass().getName().replace("Repository", "")));
@@ -54,15 +61,15 @@ class EmployeeRepositoryTest {
   }
 
   @Test
-  void expectRemoveToDeleteExistingEmployee() throws Exceptions.ResourceNotFoundException {
-    Employee<Integer> empToBeDeleted = repository.get(1);
-    Department<Integer> assignedDept = empToBeDeleted.getDepartment();
+  void shouldDeleteEmployeeAndAlsoRemoveRefFromDepartment() throws Exceptions.ResourceNotFoundException {
+    Employee<Integer> employeeToRemove = repository.get(1);
+    Department<Integer> assignedDept = employeeToRemove.getDepartment();
 
-    assertTrue(assignedDept.getEmployees().stream().anyMatch(empToBeDeleted::equals));
-    repository.remove(1);
-    assertThrows(Exceptions.ResourceNotFoundException.class, () -> repository.get(1));
-    assertTrue(assignedDept.getEmployees().stream().noneMatch(empToBeDeleted::equals));
-    assertNull(empToBeDeleted.getDepartment());
+    assertTrue(assignedDept.getEmployees().contains(employeeToRemove));
+    repository.remove(employeeToRemove.getId());
+    assertThrows(Exceptions.ResourceNotFoundException.class, () -> repository.get(employeeToRemove.getId()));
+    assertFalse(assignedDept.getEmployees().contains(employeeToRemove));
+    assertNull(employeeToRemove.getDepartment());
   }
 
   @Test
