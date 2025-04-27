@@ -11,8 +11,8 @@ The system has both `cli` and `GUI` version.
 ---
 
 ## Live version
-- [Project Instructions](https://amalitech-training.notion.site/Employee-Management-System-1ca6c750c0d5818a9e05f5baa28a9e0b)
-- [Video](https://docs.google.com/document/d/1WKfelpY1eYdCyLg3MtnKBWgefOgZPXA1UVdIKDvZNhI/edit?usp=sharing)
+- [Project Instructions](https://amalitech-training.notion.site/Enhancing-Employee-Management-System-1ca6c750c0d5812980d3d7932fabd201)
+- [Video](https://docs.google.com/document/d/1OS82TvHQkiXhq1GOySOccrBH_ccUUmrppSvSkp7OBFU/edit?usp=sharing)
 
 ## Built with
 ![Tools](https://skillicons.dev/icons?i=java,idea,git,github)
