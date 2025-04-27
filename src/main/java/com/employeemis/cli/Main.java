@@ -1,6 +1,7 @@
 package com.employeemis.cli;
 
 import com.employeemis.cli.controller.EmployeeController;
+import com.employeemis.cli.controller.DepartmentController;
 import com.employeemis.models.Department;
 import com.employeemis.models.Employee;
 import com.employeemis.repositories.DepartmentRepository;
@@ -67,7 +68,7 @@ public class Main {
         int choice = Helpers.Selectors.select("Select option", getScanner(), List.of("Employee", "Department", "Exit"));
         switch (choice) {
           case 0 -> new EmployeeController(this).process();
-          case 1 -> new com.employeemis.cli.controller.DepartmentController(this).process();
+          case 1 -> new DepartmentController(this).process();
           case 2 -> Helpers.Policies.exist("exit");
         }
       } catch (Exception e) {

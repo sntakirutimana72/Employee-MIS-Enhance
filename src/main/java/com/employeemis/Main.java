@@ -33,7 +33,15 @@ public class Main extends Application {
       employeeRepository.add(new Employee<>(
         "1", "joe", departmentRepository.get(1), 2.4, 3, 4.1));
       employeeRepository.add(new Employee<>(
-        "2", "jean", departmentRepository.get(2), 75.3, 3, 3.1));
+        "2", "jean", departmentRepository.get(2), 75, 6, 3.1));
+      employeeRepository.add(new Employee<>(
+        "3", "kim", departmentRepository.get(3), 25.3, 3, 2.21));
+      employeeRepository.add(new Employee<>(
+        "4", "jim", departmentRepository.get(1), 17.3, 0, 2.3));
+      employeeRepository.add(new Employee<>(
+        "5", "kenny", departmentRepository.get(3), 52.9, 5, 4.3));
+      employeeRepository.add(new Employee<>(
+        "6", "Suzane", departmentRepository.get(2), 84.27, 1, 1.1));
     } catch (Exception ignored) {}
   }
 
