@@ -17,4 +17,5 @@ module com.employeemis {
   opens com.employeemis.models to javafx.fxml;
   exports com.employeemis.repositories;
   opens com.employeemis.repositories to javafx.fxml;
+  exports com.employeemis.utils;
 }
