@@ -23,7 +23,7 @@ The system has both `cli` and `GUI` version.
 To ge this program running on your local environment, 
 1. First, install `Java 17.+`
 2. Install `Java FX` - `@latest`
-3. Clone the repository ([link](https://github.com/sntakirutimana72/EmployeeMIS))
+3. Clone the repository ([link](https://github.com/sntakirutimana72/Employee-MIS-Enhance))
 
 ## How does it work?
 Each application version `cli`/`GUI` has its own `entry point`.
