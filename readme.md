@@ -46,38 +46,75 @@ Each application version `cli`/`GUI` has its own `entry point`.
 Given the selection, user may be required to going down the further, while selecting an action after another.
 
 For example:
-- `Index page` ~ `When user is not authenticated` - Here user is expected to either `login` or `exit`
+- `Main Menu` ~ Here user can then start interacting with records.
   ```shell
   +--------------------------------------------------+
   |      Welcome To Employee Management System       |
   +--------------------------------------------------+
   *** Select option ***
-  1. Login
-  2. Exit
+  1. Employees
+  2. Departments
+  3. Exit
   >
   ```
-- `Dashboard page` ~ `User has been authenticated` - Here user can then start interacting with records.
+- `1. Employees` **Menu** ~ User can browse through various options like `Listing`, `CRUD operations`, ...
+    ```shell
+    +--------------------------------------------------+
+    |                  Employee Menu                   |
+    +--------------------------------------------------+
+    *** Select option ***
+    1. List Employees
+    2. Show Employee Salary Average (By Department)
+    3. Create Employee
+    4. Update Employee
+    5. Delete Employee
+    >
+    ```
+  - `1. List Employees` **Menu**
+    ```shell
+    +-------------------------------------------------------+
+    |                  Employee List Menu                   |
+    +-------------------------------------------------------+
+    *** Select option ***
+    1. List All
+    2. List Top 5 Paid
+    3. Filter By
+    4. Sort By (DESC)
+    >
+    ```
+    - `3. Filter By` **Menu**
+      ```shell
+      *** Select filter ***
+      1. Filter by department
+      2. Filter by name
+      3. Filter by salary range (eg: 75-500)
+      4. Filter by performance rate (>= X)
+      >
+      ```
+    - `4. Sort By (DESC)` **Menu**
+      ```shell
+      *** Select option ***
+      1. Sort by years of experience (DESC)
+      2. Sort by performance rate (DESC)
+      3. Sort by salary (DESC)
+      >
+      ```
+- `2. Departments` **Menu**
   ```shell
   +--------------------------------------------------+
-  |                    Login Form                    |
+  |                 Department Menu                  |
   +--------------------------------------------------+
-  Enter username:
-  > ...
-  Enter password:
-  > ...
   *** Select option ***
-  1. Users
-  2. Employees
-  3. Departments
-  4. Permissions
-  5. Logout
-  6. Exit
+  1. List Departments
+  2. Create Department
+  3. Update Department
+  4. Delete Department
   >
   ```
+
 **NOTE**:
   - `...` ~ allows user to go back one level from anywhere in the application.
   - `exit` ~ allows user to terminate the application from anywhere.
-  - `Filtering` & `Sorting` doesn't work on the `cli` version
 
 ### How To Operate `GUI` app version?
 This version doesn't require `authentication` to operate it. So, once fired up, you get straight to business.
@@ -112,19 +149,27 @@ This version doesn't require `authentication` to operate it. So, once fired up, 
 👤 **Steve**
 - GitHub: [@sntakirutimana72](https://github.com/sntakirutimana72/)
 
+---
+
 ## 🤝 Contributing
 
 Contributions, issues, and feature requests are welcome!
 
 Feel free to check the [issues page](https://github.com/sntakirutimana72/EmployeeMIS/issues/)
 
+---
+
 ## Show your support
 
 Give a ⭐️ if you like this project!
 
+---
+
 ## Acknowledgments
 
 - Devs Communities for great free and resourceful articles.
+
+---
 
 ## 📝 License
 
