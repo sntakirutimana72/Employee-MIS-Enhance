@@ -74,7 +74,7 @@ class EmployeeRepositoryTest {
 
   @Test
   void expectRemoveToThrowErrorWhenNoEmployeeFound() {
-    assertThrows(Exceptions.ResourceNotFoundException.class, () -> repository.remove(1));
+    assertThrows(Exceptions.ResourceNotFoundException.class, () -> repository.remove(11285));
   }
 
   @Test
