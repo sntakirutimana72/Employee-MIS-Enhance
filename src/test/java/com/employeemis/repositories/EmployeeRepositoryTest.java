@@ -129,4 +129,29 @@ class EmployeeRepositoryTest {
   void expectGetSalaryAverageByDepartmentToIgnoreCase() {
     assertEquals(23, repository.getSalaryAverageByDepartment("hr"));
   }
+
+  @Test
+  void shouldGiveSalaryRaiseToEveryEmployeeWhosePerformanceIsAboveOrEqualTo() throws Exceptions.ResourceNotFoundException {
+    Employee<Integer> employeeNotToGetRaise = repository.get(1);
+    double salaryOfEmployeeNotToGetRaise = employeeNotToGetRaise.getSalary();
+    employeeNotToGetRaise.setPerformanceRate(2.2);
+
+    Employee<Integer> employeeToGetRaise = create(2);
+    repository.add(employeeToGetRaise);
+    double salaryOfEmployeeToGetRaise = employeeToGetRaise.getSalary();
+    employeeToGetRaise.setPerformanceRate(3);
+
+    // Give raise
+    repository.giveSalaryRaise(2.7, 31.7);
+    assertEquals(salaryOfEmployeeNotToGetRaise, employeeNotToGetRaise.getSalary());
+    assertTrue(employeeToGetRaise.getSalary() > salaryOfEmployeeToGetRaise);
+  }
+
+  @Test
+  void shouldThrowExceptionWhenRaisingSalaryWithDeviation() {
+    // Should raise exceptions when performance or percentage deviates from acceptable constraint
+    assertThrows(
+      Exceptions.InvalidPerformanceRateException.class, () -> repository.giveSalaryRaise(7, 3));
+    assertThrows(IllegalArgumentException.class, () -> repository.giveSalaryRaise(2.7, 0));
+  }
 }

@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.control.cell.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.collections.FXCollections?>
 <?import java.lang.String?>
-<AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+
+<AnchorPane prefHeight="400.0" prefWidth="760.0" styleClass="bg-color" stylesheets="@../../css/global.css"
+            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.employeemis.controllers.EmployeesController">
   <BorderPane layoutX="185.0" layoutY="67.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0"
               AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -17,74 +22,92 @@
           <Insets bottom="10.0"/>
         </BorderPane.margin>
         <padding>
-          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+          <Insets bottom="15.0" left="5.0" right="5.0" top="10.0"/>
         </padding>
-        <HBox prefHeight="16.0">
-          <Button onAction="#handleOnCreate" mnemonicParsing="false" text="+ Create New">
-            <HBox.margin>
-              <Insets right="15.0"/>
-            </HBox.margin>
-          </Button>
-          <Button onAction="#queryTop5Paid" mnemonicParsing="false" text="Top 5 Paid">
-            <HBox.margin>
-              <Insets right="60.0"/>
-            </HBox.margin>
-          </Button>
+        <HBox>
           <AnchorPane>
-            <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                  AnchorPane.topAnchor="0.0">
-              <AnchorPane maxHeight="1.7976931348623157E308">
-                <Label text="Salary Average (By Department)" AnchorPane.bottomAnchor="0.0"
-                       AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
-              </AnchorPane>
-              <ChoiceBox fx:id="salaryAvgByDepartmentSelector" prefWidth="150.0">
+            <HBox.margin>
+              <Insets right="10.0"/>
+            </HBox.margin>
+            <Button layoutY="8.0" mnemonicParsing="false" onAction="#handleOnCreate" text="+ Create New">
+              <HBox.margin>
+                <Insets right="15.0"/>
+              </HBox.margin>
+            </Button>
+          </AnchorPane>
+          <AnchorPane>
+            <Button layoutY="8.0" mnemonicParsing="false" onAction="#queryTop5Paid" text="Top 5 Paid">
+              <HBox.margin>
+                <Insets/>
+              </HBox.margin>
+            </Button>
+          </AnchorPane>
+          <VBox HBox.hgrow="ALWAYS"/>
+          <HBox spacing="10.0" styleClass="layout">
+            <HBox.margin>
+              <Insets left="10.0"/>
+            </HBox.margin>
+            <AnchorPane>
+              <Label layoutY="6.0" styleClass="text-color" text="Salary Average (By Department)">
+                <font>
+                  <Font size="12.0"/>
+                </font>
+              </Label>
+            </AnchorPane>
+            <AnchorPane>
+              <ChoiceBox fx:id="salaryAvgByDepartmentSelector" layoutY="1.0" prefWidth="150.0">
                 <HBox.margin>
                   <Insets right="5.0"/>
                 </HBox.margin>
               </ChoiceBox>
-            </HBox>
-          </AnchorPane>
-        </HBox>
-        <Separator prefWidth="200.0">
-          <VBox.margin>
-            <Insets bottom="10.0" top="10.0"/>
-          </VBox.margin>
-        </Separator>
-        <GridPane prefHeight="16.0">
-          <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-          </columnConstraints>
-          <rowConstraints>
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-          </rowConstraints>
-          <HBox prefHeight="100.0" prefWidth="200.0">
-            <AnchorPane>
-              <Label text="Search By" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                     AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
             </AnchorPane>
-            <ChoiceBox fx:id="filterBySelector" prefWidth="200">
+          </HBox>
+          <Separator orientation="VERTICAL">
+            <HBox.margin>
+              <Insets left="10.0" right="10.0"/>
+            </HBox.margin>
+          </Separator>
+          <HBox spacing="5.0" styleClass="layout" HBox.hgrow="SOMETIMES">
+            <padding>
+              <Insets bottom="5.0" left="10.0" right="10.0" top="5.0"/>
+            </padding>
+            <TextField prefWidth="200.0" promptText="Enter performance rate (0-5)" HBox.hgrow="SOMETIMES"
+                       fx:id="performanceForSalaryRaiseField"/>
+            <TextField prefWidth="240.0" promptText="Enter raise percentage (0 &lt; X &lt;= 100)"
+                       HBox.hgrow="SOMETIMES" fx:id="salaryRaisePercentageField"/>
+            <Button mnemonicParsing="false" styleClass="text-color" text="Give Salary Raise" onAction="#onPerformSalaryRaise"/>
+          </HBox>
+        </HBox>
+        <HBox spacing="10.0" styleClass="layout">
+          <VBox.margin>
+            <Insets top="10.0"/>
+          </VBox.margin>
+          <AnchorPane>
+            <Label styleClass="text-color" text="Search By" AnchorPane.bottomAnchor="0.0"
+                   AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+          </AnchorPane>
+          <ChoiceBox fx:id="filterBySelector" prefHeight="29.0" prefWidth="174.0" HBox.hgrow="ALWAYS">
+            <items>
               <FXCollections fx:factory="observableArrayList">
                 <String fx:value="Name"/>
                 <String fx:value="Department"/>
                 <String fx:value="Performance rate"/>
                 <String fx:value="Salary range"/>
               </FXCollections>
-            </ChoiceBox>
-            <TextField fx:id="filterByNameOrSalaryOrPerformanceField" minWidth="-Infinity"/>
-            <ChoiceBox fx:id="filterByDepartmentSelector" prefWidth="200"/>
-            <Button onAction="#applyFilterBy" text="Apply" prefWidth="100"/>
-          </HBox>
-        </GridPane>
+            </items>
+          </ChoiceBox>
+          <TextField fx:id="filterByNameOrSalaryOrPerformanceField" minWidth="-Infinity" HBox.hgrow="ALWAYS"/>
+          <ChoiceBox fx:id="filterByDepartmentSelector" prefHeight="29.0" prefWidth="158.0"/>
+          <Button onAction="#applyFilterBy" prefWidth="100" text="Apply"/>
+        </HBox>
       </VBox>
     </top>
     <center>
       <AnchorPane BorderPane.alignment="CENTER">
         <TableView fx:id="employeesTable" layoutX="162.0" layoutY="55.0" AnchorPane.bottomAnchor="0.0"
-                   AnchorPane.leftAnchor="0.0"
-                   AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                   AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
           <columnResizePolicy>
-            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
           </columnResizePolicy>
           <columns>
             <TableColumn text="ID">
@@ -107,17 +130,17 @@
                 <PropertyValueFactory property="isActive"/>
               </cellValueFactory>
             </TableColumn>
-            <TableColumn fx:id="salaryColumn" text="Salary">
+            <TableColumn text="Salary">
               <cellValueFactory>
                 <PropertyValueFactory property="salary"/>
               </cellValueFactory>
             </TableColumn>
-            <TableColumn fx:id="experienceColumn" text="Years of Experience">
+            <TableColumn text="Years of Experience">
               <cellValueFactory>
                 <PropertyValueFactory property="yearsOfExperience"/>
               </cellValueFactory>
             </TableColumn>
-            <TableColumn fx:id="performanceColumn" text="Performance Rate">
+            <TableColumn text="Performance Rate">
               <cellValueFactory>
                 <PropertyValueFactory property="performanceRate"/>
               </cellValueFactory>

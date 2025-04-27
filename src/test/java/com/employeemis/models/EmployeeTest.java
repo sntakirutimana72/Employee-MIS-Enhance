@@ -108,18 +108,21 @@ class EmployeeTest {
   }
 
   @Test
-  @DisplayName("Should not give salary raise if performance rate < 4.5")
+  @DisplayName("Should not give salary raise if performance rate is below targeted")
   void shouldNotGiveSalaryRaise() {
+    employee.setPerformanceRate(3.5);
     double initialSalary = employee.getSalary();
-    assertEquals(initialSalary, employee.giveSalaryRaise());
+    employee.raiseSalary(3.7, 12);
+    assertEquals(initialSalary, employee.getSalary());
   }
 
   @Test
-  @DisplayName("Should give salary raise if performance rate >= 4.5")
+  @DisplayName("Should give salary raise if performance rate is above or equal to targeted")
   void shouldGiveSalaryRaise() {
     double initialSalary = employee.getSalary();
     employee.setPerformanceRate(4.6);
-    assertTrue(initialSalary < employee.giveSalaryRaise());
+    employee.raiseSalary(3.9, 12.3);
+    assertEquals(initialSalary * (1 + 12.3 * 0.01), employee.getSalary());
   }
 
   @Test

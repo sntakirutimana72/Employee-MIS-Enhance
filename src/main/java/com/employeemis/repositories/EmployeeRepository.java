@@ -2,6 +2,7 @@ package com.employeemis.repositories;
 
 import com.employeemis.models.Employee;
 import com.employeemis.utils.Exceptions;
+import com.employeemis.utils.Validators;
 
 import java.util.Comparator;
 import java.util.List;
@@ -12,6 +13,13 @@ public class EmployeeRepository<K> extends RepositoryAbstract<K, Employee<K>> {
       .sorted(Comparator.comparingDouble(Employee<K>::getSalary).reversed())
       .limit(5)
       .toList();
+  }
+
+  public void giveSalaryRaise(double performanceRate, double raisePercentage) {
+    Validators.Employee.validatePerformanceRate(performanceRate);
+    if (raisePercentage <= 0 || raisePercentage > 100)
+      throw new IllegalArgumentException("Salary raise percentage must be `0 < X <= 100`");
+    getAll().forEach(e -> e.raiseSalary(performanceRate, raisePercentage));
   }
 
   public double getSalaryAverageByDepartment(String departmentName) {

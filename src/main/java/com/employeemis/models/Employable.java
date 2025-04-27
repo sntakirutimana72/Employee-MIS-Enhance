@@ -18,5 +18,5 @@ public interface Employable<T> extends Comparable<Employable<T>>, Nameable {
   void setPerformanceRate(double performanceRate) throws IllegalArgumentException;
 
   // Give salary raise based on performance rate
-  double giveSalaryRaise();
+  void raiseSalary(double performanceRate, double raisePercentage);
 }

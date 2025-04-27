@@ -6,6 +6,7 @@ import com.employeemis.repositories.EmployeeRepository;
 import com.employeemis.repositories.RepositoryUpdateConsumer;
 import com.employeemis.utils.Alerts;
 
+import com.employeemis.utils.Converters;
 import com.employeemis.utils.Exceptions;
 import com.employeemis.utils.Filters;
 import javafx.application.Platform;
@@ -24,11 +25,12 @@ import java.util.*;
 import java.util.function.Consumer;
 
 public class EmployeesController extends Controller {
-  @FXML private TableColumn<Employee<String>, Double> salaryColumn;
-  @FXML private TableColumn<Employee<String>, Integer> experienceColumn;
-  @FXML private TableColumn<Employee<String>, Double> performanceColumn;
   @FXML private TableView<Employee<String>> employeesTable;
   @FXML private ChoiceBox<Department<String>> salaryAvgByDepartmentSelector;
+
+  // Salary raise fields
+  @FXML private TextField performanceForSalaryRaiseField;
+  @FXML private TextField salaryRaisePercentageField;
 
   // Filters
   @FXML private TextField filterByNameOrSalaryOrPerformanceField;
@@ -43,39 +45,34 @@ public class EmployeesController extends Controller {
   @FXML
   private void applyFilterBy() {
     try {
-      List<Employee<String>> sortedList = new ArrayList<>();
       switch (filterBy) {
-        case "Name" -> Filters.Employee
-          .byName(repository().getAll(), filterByNameOrSalaryOrPerformanceField.getText().trim())
-          .forEachRemaining(sortedList::add);
+        case "Name" -> populateTable(Converters.toStream(Filters.Employee
+            .byName(repository().getAll(), filterByNameOrSalaryOrPerformanceField.getText().trim())).toList());
         case "Department" -> {
           if (Objects.isNull(filterByDepartmentSelector.getValue()))
             return;
-          Filters.Employee.byDepartment(repository().getAll(), filterByDepartmentSelector.getValue().getName())
-            .forEachRemaining(sortedList::add);
+          populateTable(Converters.toStream(Filters.Employee
+              .byDepartment(repository().getAll(), filterByDepartmentSelector.getValue().getName())).toList());
         } case "Salary range" -> {
           String[] salaryRange = filterByNameOrSalaryOrPerformanceField.getText()
             .trim().replace(" ", "").split("-");
 
-          if (salaryRange.length < 2)
-            return;
-
+          if (salaryRange.length != 2)
+            throw new IllegalArgumentException("Salary must have both & only start and end range");
           double salaryFrom = Double.parseDouble(salaryRange[0]);
           double salaryTo = Double.parseDouble(salaryRange[1]);
 
           if (salaryFrom > salaryTo)
             throw new IllegalArgumentException("Salary start range must be less than or equal to end range");
-
-          Filters.Employee
-            .bySalaryRange(repository().getAll(), salaryFrom, salaryTo).forEachRemaining(sortedList::add);
+          populateTable(Converters.toStream(
+            Filters.Employee.bySalaryRange(repository().getAll(), salaryFrom, salaryTo)).toList());
         } case "Performance rate" -> {
           double performance = Double.parseDouble(filterByNameOrSalaryOrPerformanceField.getText().trim());
-          Filters.Employee
-            .withPerformanceGreaterThanOrEqualTo(repository().getAll(), performance).forEachRemaining(sortedList::add);
-        } case "top5Paid" -> sortedList = repository().getTop5Paid();
-        default -> sortedList = repository().getAll();
+          populateTable(Converters.toStream(Filters.Employee
+            .withPerformanceGreaterThanOrEqualTo(repository().getAll(), performance)).toList());
+        } case "top5Paid" -> populateTable(repository().getTop5Paid());
+        default -> populateTable(repository().getAll());
       }
-      populateTable(sortedList);
     } catch (Exception e) {
       Alerts.display(Alert.AlertType.ERROR, "ERROR", null, e.getMessage());
     }
@@ -110,16 +107,15 @@ public class EmployeesController extends Controller {
   private void readySalaryAvgReportComputer(List<Department<String>> departments) {
     salaryAvgByDepartmentSelector.getItems().setAll(departments);
     salaryAvgByDepartmentSelector.getSelectionModel().selectedItemProperty().addListener(
-      (listener, prev, current) -> {
-        Alerts.display(
-          Alert.AlertType.INFORMATION,
-          "Salary Average Report",
-          null,
-          String.format(
-            "Salary Average in %s department is $%f", current.getName(),
-            repository().getSalaryAverageByDepartment(current.getName())
-          ));
-      });
+      (listener, prev, current) -> Alerts.display(
+        Alert.AlertType.INFORMATION,
+        "Salary Average Report",
+        null,
+        String.format(
+          "Salary Average in %s department is $%f", current.getName(),
+          repository().getSalaryAverageByDepartment(current.getName())
+        ))
+      );
   }
 
   private void onReady() {
@@ -135,6 +131,7 @@ public class EmployeesController extends Controller {
     employeesTable.refresh();
   }
 
+  // Method add action column to the table after the fact
   private TableColumn<Employee<String>, Void> getEmployeeVoidTableColumn() {
     TableColumn<Employee<String>, Void> actionsColumn = new TableColumn<>("Actions");
 
@@ -230,6 +227,25 @@ public class EmployeesController extends Controller {
   private void queryTop5Paid() {
     filterBy = "top5Paid";
     applyFilterBy();
+  }
+
+  @FXML
+  private void onPerformSalaryRaise() {
+    try {
+      double performance = Double.parseDouble(performanceForSalaryRaiseField.getText().trim());
+      double percentage = Double.parseDouble(salaryRaisePercentageField.getText().trim());
+
+      // Perform raise
+      repository().giveSalaryRaise(performance, percentage);
+      Alerts.display(Alert.AlertType.INFORMATION, "Salary Raise - SUCCESS", null, "Salary raise was successful!!");
+
+      // Clear fields
+      performanceForSalaryRaiseField.clear();
+      salaryRaisePercentageField.clear();
+    } catch (Exception e) {
+      // Display any error occurred mid-process
+      Alerts.display(Alert.AlertType.ERROR, "Salary Raise", null, e.getMessage());
+    }
   }
 
   public void initialize() {
