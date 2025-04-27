@@ -6,6 +6,11 @@
   -fx-text-fill: #374151; /* fixed */
 }
 
+.label {
+  -fx-text-fill: #374151;
+  -fx-font-size: 12px;
+}
+
 .button {
   -fx-background-color: white;
   -fx-background-radius: 6px;
