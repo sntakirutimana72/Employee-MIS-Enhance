@@ -242,6 +242,7 @@ public class EmployeesController extends Controller {
       // Clear fields
       performanceForSalaryRaiseField.clear();
       salaryRaisePercentageField.clear();
+      applyFilterBy();
     } catch (Exception e) {
       // Display any error occurred mid-process
       Alerts.display(Alert.AlertType.ERROR, "Salary Raise", null, e.getMessage());
