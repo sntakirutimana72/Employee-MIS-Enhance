@@ -46,10 +46,9 @@ public class DepartmentProcessor {
       Department<Integer> department = selectDepartment(sc, queryAll);
       try {
         remover.accept(department.getId());
+        Helpers.Printer.alert("Department deleted successfully!!");
       } catch (ResourceNotFoundException e) {
         Loggers.BasicLogger.error(CRUDProcessor.class.getName(), "DELETE", e);
-      } finally {
-        Helpers.Printer.alert("Department deleted successfully!!");
       }
     }
 
@@ -57,7 +56,7 @@ public class DepartmentProcessor {
       while (true) {
         try {
           Department<Integer> department = selectDepartment(sc, queryAll);
-          String name = Helpers.Prompt.getText(sc, "Enter name:\n >");
+          String name = Helpers.Prompt.getText(sc, "Enter name:\n> ");
 
           updater.apply(department.getId(), "name", name);
           Helpers.Printer.alert(String.format("Department with ID~%s was successfully updated!", department.getId()));
