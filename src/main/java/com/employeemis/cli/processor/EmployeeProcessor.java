@@ -61,7 +61,7 @@ public class EmployeeProcessor {
     public static void create(Scanner sc, Consumer<Employee<Integer>> saver,
                               Consumer<Department<Integer>> departmentSaver,
                               Supplier<List<Department<Integer>>> departmentQuerySelector
-    ) throws Exceptions.AbortException {
+    ) {
       Helpers.Printer.alert("Create New Employee");
       while (true) {
         try {
@@ -92,6 +92,9 @@ public class EmployeeProcessor {
           return;
         } catch (IllegalArgumentException e) {
           Helpers.Printer.alert(e.getMessage());
+        } catch (Exceptions.AbortException e) {
+          Helpers.Printer.alert(e.getMessage());
+          return;
         }
       }
     }
@@ -100,9 +103,16 @@ public class EmployeeProcessor {
                               Consumer<Department<Integer>> departmentSaver,
                               Supplier<List<Employee<Integer>>> queryAll,
                               Supplier<List<Department<Integer>>> departmentQueryAll
-    ) throws Exceptions.AbortException {
+    ) {
       // Select employee to work with
-      Employee<Integer> employee = selectEntity(sc, "employee", queryAll);
+      Employee<Integer> employee;
+      try {
+        employee = selectEntity(sc, "employee", queryAll);
+      } catch (Exceptions.AbortException e) {
+        Helpers.Printer.alert(e.getMessage());
+        return;
+      }
+
       while (true) {
         try {
           // Get attribute to be updated
@@ -140,18 +150,21 @@ public class EmployeeProcessor {
           return;
         } catch (IllegalArgumentException e) {
           Helpers.Printer.alert(e.getMessage());
+        } catch (Exceptions.AbortException e) {
+          Helpers.Printer.alert(e.getMessage());
+          return;
         }
       }
     }
   }
 
   public static class DestroyProcessor {
-    public static void remove(Scanner sc, Supplier<List<Employee<Integer>>> queryAll, EntityRemover<Integer> remover) throws Exceptions.AbortException {
-      Employee<Integer> employee = selectEntity(sc, "employee", queryAll);
+    public static void remove(Scanner sc, Supplier<List<Employee<Integer>>> queryAll, EntityRemover<Integer> remover) {
       try {
+        Employee<Integer> employee = selectEntity(sc, "employee", queryAll);
         remover.accept(employee.getId());
         Helpers.Printer.alert("Employee with ID~(" + employee.getId() + ") was successfully deleted!!");
-      } catch (ResourceNotFoundException e) {
+      } catch (ResourceNotFoundException | Exceptions.AbortException e) {
         Helpers.Printer.alert(e.getMessage());
       }
     }
@@ -188,30 +201,42 @@ public class EmployeeProcessor {
     private static class FilterProcessor {
       private static void byDepartment(Scanner sc, Supplier<List<Employee<Integer>>> queryAll,
                                        Supplier<List<Department<Integer>>> queryAllDepartments
-      ) throws Exceptions.AbortException {
-        Department<Integer> department = selectEntity(sc, "department", queryAllDepartments);
-        list(
-          "List of Employees in " + department.getName() + " department",
-          Converters.toStream(Filters.Employee.byDepartment(queryAll.get(), department.getName())).toList());
+      ) {
+        try {
+          Department<Integer> department = selectEntity(sc, "department", queryAllDepartments);
+          list(
+            "List of Employees in " + department.getName() + " department",
+            Converters.toStream(Filters.Employee.byDepartment(queryAll.get(), department.getName())).toList());
+        } catch (Exceptions.AbortException e) {
+          Helpers.Printer.alert(e.getMessage());
+        }
       }
 
-      private static void byName(Scanner sc, Supplier<List<Employee<Integer>>> queryAll) throws Exceptions.AbortException {
-        String name = Helpers.Prompt.getText(sc, "Enter name:\n> ");
-        list(
-          "List of Employees whose names contains `" + name + "`",
-          Converters.toStream(Filters.Employee.byName(queryAll.get(), name)).toList()
-        );
+      private static void byName(Scanner sc, Supplier<List<Employee<Integer>>> queryAll) {
+        try {
+          String name = Helpers.Prompt.getText(sc, "Enter name:\n> ");
+          list(
+            "List of Employees whose names contains `" + name + "`",
+            Converters.toStream(Filters.Employee.byName(queryAll.get(), name)).toList()
+          );
+        } catch (Exceptions.AbortException e) {
+          Helpers.Printer.alert(e.getMessage());
+        }
       }
 
-      private static void byPerformance(Scanner sc, Supplier<List<Employee<Integer>>> queryAll) throws Exceptions.AbortException {
-        double rate = Helpers.Prompt.getDouble(sc, "Enter performance rate:\n> ");
-        list(
-          "List of Employees with Performance Rate >= " + rate,
-          Converters.toStream(Filters.Employee.withPerformanceGreaterThanOrEqualTo(queryAll.get(), rate)).toList()
-        );
+      private static void byPerformance(Scanner sc, Supplier<List<Employee<Integer>>> queryAll) {
+        try {
+          double rate = Helpers.Prompt.getDouble(sc, "Enter performance rate:\n> ");
+          list(
+            "List of Employees with Performance Rate >= " + rate,
+            Converters.toStream(Filters.Employee.withPerformanceGreaterThanOrEqualTo(queryAll.get(), rate)).toList()
+          );
+        } catch (Exceptions.AbortException e) {
+          Helpers.Printer.alert(e.getMessage());
+        }
       }
 
-      private static void bySalaryRange(Scanner sc, Supplier<List<Employee<Integer>>> queryAll) throws Exceptions.AbortException {
+      private static void bySalaryRange(Scanner sc, Supplier<List<Employee<Integer>>> queryAll) {
         while (true) {
           try {
             String range = Helpers.Prompt.getText(sc, "Enter salary range (eg: 123-320.5):\n> ").trim();
@@ -232,6 +257,9 @@ public class EmployeeProcessor {
             return;
           } catch (IllegalArgumentException e) {
             Helpers.Printer.alert(e.getMessage());
+          } catch (Exceptions.AbortException e) {
+            Helpers.Printer.alert(e.getMessage());
+            return;
           }
         }
       }
@@ -280,7 +308,7 @@ public class EmployeeProcessor {
               case 1 -> comparator = Comparators.Employee.byPerformanceDesc();
               default -> comparator = Comparators.Employee.bySalaryDesc();
             }
-            list(
+            isolatedList(
               "List of Employees",
               queryAll.get().stream().sorted(comparator).toList()
             );

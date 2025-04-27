@@ -5,7 +5,6 @@ import com.employeemis.cli.Helpers;
 import com.employeemis.cli.actions.EntityDynamicUpdater;
 import com.employeemis.cli.actions.EntityRemover;
 import com.employeemis.models.Department;
-import com.employeemis.utils.Loggers;
 import static com.employeemis.utils.Exceptions.ResourceNotFoundException;
 
 import java.util.List;
@@ -14,6 +13,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class DepartmentProcessor {
+
   public static class ListProcessor {
     private static void list(List<Department<Integer>> departments) {
       Helpers.Printer.tabular(
@@ -28,9 +28,14 @@ public class DepartmentProcessor {
         )).toList()
       );
     }
+
     public static void process(Supplier<List<Department<Integer>>> queryAll) {
-      List<Department<Integer>> departments = Helpers.Policies.cannotBeEmpty("department", queryAll);
-      list(departments);
+      try {
+        List<Department<Integer>> departments = Helpers.Policies.cannotBeEmpty("department", queryAll);
+        list(departments);
+      } catch (Exception e) {
+        Helpers.Printer.alert(e.getMessage());
+      }
     }
   }
 
@@ -42,17 +47,18 @@ public class DepartmentProcessor {
       return departments.get(index);
     }
 
-    public static void remove(Scanner sc, EntityRemover<Integer> remover, Supplier<List<Department<Integer>>> queryAll) throws Exceptions.AbortException {
-      Department<Integer> department = selectDepartment(sc, queryAll);
+    public static void remove(Scanner sc, EntityRemover<Integer> remover, Supplier<List<Department<Integer>>> queryAll) {
       try {
+        Department<Integer> department = selectDepartment(sc, queryAll);
         remover.accept(department.getId());
         Helpers.Printer.alert("Department deleted successfully!!");
-      } catch (ResourceNotFoundException e) {
-        Loggers.BasicLogger.error(CRUDProcessor.class.getName(), "DELETE", e);
+      } catch (ResourceNotFoundException | Exceptions.AbortException e) {
+        Helpers.Printer.alert(e.getMessage());
       }
     }
 
-    public static void update(Scanner sc, EntityDynamicUpdater<Integer> updater, Supplier<List<Department<Integer>>> queryAll) throws Exceptions.AbortException {
+    public static void update(Scanner sc, EntityDynamicUpdater<Integer> updater, Supplier<List<Department<Integer>>> queryAll) {
+      Helpers.Printer.alert("Update department");
       while (true) {
         try {
           Department<Integer> department = selectDepartment(sc, queryAll);
@@ -63,11 +69,14 @@ public class DepartmentProcessor {
           return;
         } catch (IllegalArgumentException e) {
           Helpers.Printer.alert(e.getMessage());
+        } catch (Exceptions.AbortException e) {
+          Helpers.Printer.alert(e.getMessage());
+          return;
         }
       }
     }
 
-    public static void create(Scanner sc, Consumer<Department<Integer>> saver) throws Exceptions.AbortException {
+    public static void create(Scanner sc, Consumer<Department<Integer>> saver) {
       Helpers.Printer.alert("Create new department");
       while (true) {
         try {
@@ -79,6 +88,9 @@ public class DepartmentProcessor {
           return;
         } catch (IllegalArgumentException e) {
           Helpers.Printer.alert(e.getMessage());
+        } catch (Exceptions.AbortException e) {
+          Helpers.Printer.alert(e.getMessage());
+          return;
         }
       }
     }

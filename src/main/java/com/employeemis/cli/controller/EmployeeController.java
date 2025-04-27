@@ -11,7 +11,6 @@ import com.employeemis.utils.Validators;
 
 import static com.employeemis.utils.Exceptions.ResourceNotFoundException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class EmployeeController extends Controller {
@@ -55,15 +54,14 @@ public class EmployeeController extends Controller {
     }
   }
 
-  private void showSalaryAverage() throws Exceptions.AbortException {
-    List<Department<Integer>> departments = Helpers.Policies.cannotBeEmpty("department", getDepartmentRepository()::getAll);
-    int choice = Helpers.Selectors.selectEntity("department", getScanner(), departments);
-
+  private void showSalaryAverage() {
     try {
+      List<Department<Integer>> departments = Helpers.Policies.cannotBeEmpty("department", getDepartmentRepository()::getAll);
+      int choice = Helpers.Selectors.selectEntity("department", getScanner(), departments);
       String departmentName = getDepartmentRepository().get(choice).getName();
       double average = repository().getSalaryAverageByDepartment(departmentName);
       Helpers.Printer.alert(String.format("Salary Average in %s department is $%f", departmentName, average));
-    } catch (ResourceNotFoundException e) {
+    } catch (ResourceNotFoundException | Exceptions.AbortException e) {
       Helpers.Printer.alert(e.getMessage());
     }
   }
@@ -72,14 +70,15 @@ public class EmployeeController extends Controller {
     //noinspection InfiniteLoopStatement
     while (true) {
       try {
-        int choice = Helpers.Selectors.select("Select option", getScanner(), new ArrayList<>(List.of(
+        int choice = Helpers.Selectors.select("Select option", getScanner(), List.of(
           "List Employees",
           "Show Employee Salary Average (By Department)",
           "Give salary raise",
           "Create Employee",
           "Update Employee",
           "Delete Employee"
-        )));
+        ));
+
         switch (choice) {
           case 0 -> EmployeeProcessor
             .ListProcessor.process(getScanner(), repository()::getAll, getDepartmentRepository()::getAll);
